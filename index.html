@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centro de Capacitación | Sistema de gestión</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">CC</div>
+        <div><strong>Centro de</strong><span>Capacitación</span></div>
+      </div>
+
+      <p class="nav-caption">MENÚ PRINCIPAL</p>
+      <nav class="navigation">
+        <button class="nav-item active" data-view="dashboard"><span class="nav-icon">▦</span>Resumen</button>
+        <button class="nav-item" data-view="alumnos"><span class="nav-icon">♙</span>Alumnos</button>
+        <button class="nav-item" data-view="profesores"><span class="nav-icon">♧</span>Profesores</button>
+        <button class="nav-item" data-view="cursos"><span class="nav-icon">▤</span>Cursos</button>
+        <button class="nav-item" data-view="inscripciones"><span class="nav-icon">＋</span>Inscripciones</button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <span class="connection-dot" id="connectionDot"></span>
+        <div><strong id="connectionText">Conectando...</strong><small>Base de datos Supabase</small></div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobileMenu" aria-label="Abrir menú">☰</button>
+        <div>
+          <p class="eyebrow">GESTIÓN ACADÉMICA</p>
+          <h1 id="pageTitle">Resumen general</h1>
+        </div>
+        <div class="topbar-right">
+          <span class="today-label" id="todayLabel"></span>
+          <div class="avatar">CC</div>
+        </div>
+      </header>
+
+      <section class="page-view active" id="dashboardView">
+        <div class="welcome-panel">
+          <div>
+            <p class="welcome-kicker">CENTRO DE CAPACITACIÓN</p>
+            <h2>Organiza tu gestión académica.</h2>
+            <p>Administra alumnos, profesores, cursos e inscripciones desde un solo lugar.</p>
+          </div>
+          <div class="welcome-symbol">✦</div>
+        </div>
+
+        <div class="section-heading">
+          <div><h2>Resumen</h2><p>Estado actual de tus registros</p></div>
+          <button class="btn btn-light" id="refreshDashboard">↻ Actualizar</button>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card">
+            <div class="stat-top"><span>Alumnos</span><span class="stat-icon blue">♙</span></div>
+            <strong id="totalAlumnos">—</strong><small>Alumnos registrados</small>
+          </article>
+          <article class="stat-card">
+            <div class="stat-top"><span>Profesores</span><span class="stat-icon violet">♧</span></div>
+            <strong id="totalProfesores">—</strong><small>Profesores registrados</small>
+          </article>
+          <article class="stat-card">
+            <div class="stat-top"><span>Cursos</span><span class="stat-icon orange">▤</span></div>
+            <strong id="totalCursos">—</strong><small>Cursos disponibles</small>
+          </article>
+          <article class="stat-card">
+            <div class="stat-top"><span>Inscripciones</span><span class="stat-icon green">＋</span></div>
+            <strong id="totalInscripciones">—</strong><small>Matrículas registradas</small>
+          </article>
+        </div>
+
+        <div class="dashboard-bottom">
+          <div class="info-card">
+            <div class="section-heading compact"><div><h2>Accesos rápidos</h2><p>Ir directamente a un módulo</p></div></div>
+            <div class="quick-grid">
+              <button class="quick-link" data-view="alumnos"><span class="quick-icon blue">♙</span><span><b>Alumnos</b><small>Gestionar estudiantes</small></span><i>→</i></button>
+              <button class="quick-link" data-view="profesores"><span class="quick-icon violet">♧</span><span><b>Profesores</b><small>Gestionar docentes</small></span><i>→</i></button>
+              <button class="quick-link" data-view="cursos"><span class="quick-icon orange">▤</span><span><b>Cursos</b><small>Administrar cursos</small></span><i>→</i></button>
+              <button class="quick-link" data-view="inscripciones"><span class="quick-icon green">＋</span><span><b>Inscripciones</b><small>Registrar matrículas</small></span><i>→</i></button>
+            </div>
+          </div>
+          <div class="info-card tip-card">
+            <span class="tip-icon">✦</span>
+            <h3>Todo en orden</h3>
+            <p>Los datos que registres desde los módulos se guardarán directamente en tu proyecto de Supabase.</p>
+            <small>Centro de Capacitación · Panel administrativo</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="page-view" id="alumnosView">
+        <div class="section-heading">
+          <div><h2>Alumnos</h2><p>Administra los estudiantes registrados.</p></div>
+          <button class="btn btn-primary" data-create="alumnos">＋ Nuevo alumno</button>
+        </div>
+        <div class="table-card">
+          <div class="table-toolbar"><input class="search-input" data-search="alumnos" placeholder="Buscar alumno..."><span class="result-count" id="countAlumnos"></span></div>
+          <div class="table-wrap"><table><thead><tr><th>ID</th><th>Apellidos</th><th>Nombres</th><th class="actions-head">Acciones</th></tr></thead><tbody id="alumnosBody"></tbody></table></div>
+        </div>
+      </section>
+
+      <section class="page-view" id="profesoresView">
+        <div class="section-heading">
+          <div><h2>Profesores</h2><p>Administra los docentes del centro.</p></div>
+          <button class="btn btn-primary" data-create="profesores">＋ Nuevo profesor</button>
+        </div>
+        <div class="table-card">
+          <div class="table-toolbar"><input class="search-input" data-search="profesores" placeholder="Buscar profesor..."><span class="result-count" id="countProfesores"></span></div>
+          <div class="table-wrap"><table><thead><tr><th>ID</th><th>Apellidos</th><th>Nombres</th><th class="actions-head">Acciones</th></tr></thead><tbody id="profesoresBody"></tbody></table></div>
+        </div>
+      </section>
+
+      <section class="page-view" id="cursosView">
+        <div class="section-heading">
+          <div><h2>Cursos</h2><p>Registra cursos y asigna un profesor responsable.</p></div>
+          <button class="btn btn-primary" data-create="cursos">＋ Nuevo curso</button>
+        </div>
+        <div class="table-card">
+          <div class="table-toolbar"><input class="search-input" data-search="cursos" placeholder="Buscar curso..."><span class="result-count" id="countCursos"></span></div>
+          <div class="table-wrap"><table><thead><tr><th>ID</th><th>Nombre del curso</th><th>Profesor</th><th class="actions-head">Acciones</th></tr></thead><tbody id="cursosBody"></tbody></table></div>
+        </div>
+      </section>
+
+      <section class="page-view" id="inscripcionesView">
+        <div class="section-heading">
+          <div><h2>Inscripciones</h2><p>Registra y consulta las matrículas de los alumnos.</p></div>
+          <button class="btn btn-primary" data-create="inscripciones">＋ Nueva inscripción</button>
+        </div>
+        <div class="table-card">
+          <div class="table-toolbar"><input class="search-input" data-search="inscripciones" placeholder="Buscar inscripción..."><span class="result-count" id="countInscripciones"></span></div>
+          <div class="table-wrap"><table><thead><tr><th>ID</th><th>Alumno</th><th>Curso</th><th>Fecha de matrícula</th><th class="actions-head">Acciones</th></tr></thead><tbody id="inscripcionesBody"></tbody></table></div>
+        </div>
+      </section>
+      <footer class="footer">© <span id="year"></span> Centro de Capacitación <span>·</span> Sistema de gestión académica</footer>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header"><div><p class="eyebrow">GESTIÓN DE REGISTROS</p><h2 id="modalTitle">Nuevo registro</h2></div><button class="icon-button" id="closeModal" aria-label="Cerrar">×</button></div>
+      <form id="recordForm">
+        <div id="formFields" class="form-fields"></div>
+        <div class="modal-actions"><button type="button" class="btn btn-light" id="cancelModal">Cancelar</button><button type="submit" class="btn btn-primary" id="saveButton">Guardar registro</button></div>
+      </form>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+</body>
+</html>
